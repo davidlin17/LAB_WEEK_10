@@ -5,17 +5,16 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
-import com.example.lab_week_10.viewmodel.TotalViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel by lazy {
-        ViewModelProvider(this)[TotalViewModel::class.java]
-    }
+    private lateinit var viewModel: TotalViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        viewModel = ViewModelProvider(this).get(TotalViewModel::class.java)
 
         prepareViewModel()
     }
@@ -26,14 +25,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun prepareViewModel() {
-        // Observe LiveData
-        viewModel.total.observe(this) { total ->
-            updateText(total)
-        }
 
-        // Button listener
+        // Observe the LiveData object
+        viewModel.total.observe(this, {
+            // Whenever the value changes, updateText() is called
+            updateText(it)
+        })
+
         findViewById<Button>(R.id.button_increment).setOnClickListener {
             viewModel.incrementTotal()
         }
     }
 }
+
+
