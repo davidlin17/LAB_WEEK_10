@@ -5,10 +5,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
-import com.example.lab_week_10.Total
-import com.example.lab_week_10.TotalDatabase
-import com.example.lab_week_10.TotalObject
-import java.util.Date
+import com.example.lab_week_10.database.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,8 +15,7 @@ class MainActivity : AppCompatActivity() {
             applicationContext,
             TotalDatabase::class.java,
             "total-database"
-        ).allowMainThreadQueries()
-            .build()
+        ).allowMainThreadQueries().build()
     }
 
     private val viewModel by lazy {
@@ -29,13 +26,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initValueFromDb()
+        initializeValue()
     }
 
     override fun onStart() {
         super.onStart()
 
-        val data = db.totalDao().getTotal(ID)
+        val data = db.totalDao().getTotal()
         if (data != null) {
             Toast.makeText(this, "Last updated: ${data.total.date}", Toast.LENGTH_LONG).show()
         }
@@ -44,34 +41,32 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
 
-        val newTotal = Total(
-            id = ID,
+        val updated = Total(
+            id = 1,
             total = TotalObject(
                 value = viewModel.total.value ?: 0,
                 date = Date().toString()
             )
         )
 
-        db.totalDao().update(newTotal)
+        db.totalDao().update(updated)
     }
 
-    private fun initValueFromDb() {
-        val data = db.totalDao().getTotal(ID)
+    private fun initializeValue() {
+        val data = db.totalDao().getTotal()
 
         if (data == null) {
-            db.totalDao().insert(
-                Total(
-                    id = ID,
-                    total = TotalObject(0, Date().toString())
+            val new = Total(
+                id = 1,
+                total = TotalObject(
+                    value = 0,
+                    date = Date().toString()
                 )
             )
+            db.totalDao().insert(new)
             viewModel.setTotal(0)
         } else {
             viewModel.setTotal(data.total.value)
         }
-    }
-
-    companion object {
-        const val ID: Long = 1
     }
 }

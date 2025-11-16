@@ -1,9 +1,10 @@
-package com.example.lab_week_10
+package com.example.lab_week_10.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
-@Database(entities = [Total::class], version = 1)
+@Database(entities = [Total::class], version = 2, exportSchema = false)
 abstract class TotalDatabase : RoomDatabase() {
     abstract fun totalDao(): TotalDao
 }
+

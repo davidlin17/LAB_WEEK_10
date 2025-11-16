@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 
 class TotalViewModel : ViewModel() {
 
-    val total = MutableLiveData<Int>()
+    val total = MutableLiveData<Int>(0)
 
-    fun setTotal(value: Int) {
-        total.value = value
+    fun setTotal(v: Int) {
+        total.value = v
     }
 }
